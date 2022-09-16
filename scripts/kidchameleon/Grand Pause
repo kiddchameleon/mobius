@@ -1,0 +1,56 @@
+##This effectively puts a full stop on all your tracks.
+##On the first press it stops all tracks
+##On the second press it asks if you want to perform a global reset
+##If you continue, an adjustable timer will proceed to clear your tracks
+##If you decide to press again during that timer, it will cancel the reset and leave your tracks on pause.
+
+##It can be especially useful if you're using a host DAW for your tempo to map the button press to the same key/pad that controls your full stop in the DAW.
+#that way, if you have some sort of pattern going, stopping transport on the host will coincide with stopping all your tracks in Mobius, hence the // effect
+
+#Happy stopping!
+
+!name GrandPause
+!autoload
+
+variable allInResetMode true
+for *
+if mode != reset
+set allInResetMode false
+endif
+next
+
+!multiclick 1500
+
+if allInResetMode
+cancel
+endif
+
+for all
+set Quantize off
+set switchQuantize off
+Restart
+Pause
+message Stopped!
+next
+end
+
+label click
+message Confirm Global Reset?
+
+else
+if clickCount = 2
+message Clearing...
+wait msecs 2500
+GlobalReset
+set trackSyncUnit default
+end
+
+else
+if clickCount = 3
+message Canceled!
+cancel
+end
+
+label endClick
+set trackSyncUnit default
+end
